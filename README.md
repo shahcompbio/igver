@@ -58,12 +58,12 @@ An example command getting two bam files as input, to be displayed vertically in
 # Example results
 You can see the IGV snapshots in `test/snapshots`.
 
-1. [region_of_iterest](test/snapshots/1-122535169-112537169.region_of_interest.tumor.png) 
+1. [region_of_iterest](test/snapshots/1-122535169-112537169.region_of_interest.tumor.png) <br>
 ![](test/snapshots/1-122535169-112537169.region_of_interest.tumor.png)
-2. [translocation](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png) 
+2. [translocation](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png) <br>
 ![](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png)
-3. [inversion](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png)
+3. [inversion](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png) <br>
 ![](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png)
-4. [duplication](test/snapshots/19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png)
+4. [duplication](test/snapshots/19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png)<br>
 ![](test/snapshots/19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png)
 
