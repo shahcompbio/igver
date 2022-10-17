@@ -120,18 +120,18 @@ def run_igv(args):
     cmd = f'xvfb-run --auto-servernum {igv_runfile} -b {tmp_batchname}'
     print(f'[LOG:{time.ctime()}] command:\n{cmd}')
     n_iter = 0
-    #while not all_png_paths_exist(png_paths):
-    #    n_iter += 1
-    print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
-    exec_igv_cmd(cmd)
-    #if all_png_paths_exist(png_paths) and n_iter == 0:
-    #    print(f'[LOG:{time.ctime()}] all png files already exist')
-    #    if args.overwrite:
-    #        rm_existing_pngs(png_paths)
-    #        while not all_png_paths_exist(png_paths):
-    #            n_iter += 1
-    #            print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
-    #            exec_igv_cmd(cmd)
+    while not all_png_paths_exist(png_paths):
+        n_iter += 1
+        print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
+        exec_igv_cmd(cmd)
+    if all_png_paths_exist(png_paths) and n_iter == 0:
+        print(f'[LOG:{time.ctime()}] all png files already exist')
+        if args.overwrite:
+            rm_existing_pngs(png_paths)
+            while not all_png_paths_exist(png_paths):
+                n_iter += 1
+                print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
+                exec_igv_cmd(cmd)
 
     rmbatch = sp.Popen(f'rm {tmp_batchname}', stdout=sp.PIPE, shell=True)
     rmbatch_stdout = rmbatch.communicate()[0].strip()
