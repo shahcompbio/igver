@@ -64,8 +64,8 @@ singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
 # Example results
 You can see the IGV snapshots in `test/snapshots`.
 
-1. [region_of_iterest](test/snapshots/1-122535169-112537169.region_of_interest.tumor.png) <br>
-![](test/snapshots/1-122535169-112537169.region_of_interest.tumor.png)
+1. [region_of_iterest](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png) <br>
+![](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png)
 2. [translocation](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png) <br>
 ![](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png)
 3. [inversion](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png) <br>
