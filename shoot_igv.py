@@ -13,7 +13,7 @@ def parse_args():
     description = 'Create temporary batchfile and run IGV for a region list'
     p = argparse.ArgumentParser(description=description)
     p.add_argument('--bam', nargs='+', help="Input tumor bam file(s) to be shown vertically", required=True)
-    p.add_argument('-r', '--regions', help="Either 'chr:start-end' string, or input regions file with region columns to be shown horizontally", required=True)
+    p.add_argument('-r', '--regions', help="Either a 'chr:start-end' string, or input regions file with region columns to be shown horizontally", required=True)
     p.add_argument('-o', '--outdir', help="Output png directory", required=True)
     p.add_argument('-t', '--tag', help="Tag to suffix your png file [default: 'tumor']", default='tumor')
     p.add_argument('-mph', '--max_panel_height', help="Max panel height [default: 200]", type=int, default=200)
@@ -120,18 +120,18 @@ def run_igv(args):
     cmd = f'xvfb-run --auto-servernum {igv_runfile} -b {tmp_batchname}'
     print(f'[LOG:{time.ctime()}] command:\n{cmd}')
     n_iter = 0
-    while not all_png_paths_exist(png_paths):
-        n_iter += 1
-        print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
-        exec_igv_cmd(cmd)
-    if all_png_paths_exist(png_paths) and n_iter == 0:
-        print(f'[LOG:{time.ctime()}] all png files already exist')
-        if args.overwrite:
-            rm_existing_pngs(png_paths)
-            while not all_png_paths_exist(png_paths):
-                n_iter += 1
-                print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
-                exec_igv_cmd(cmd)
+    #while not all_png_paths_exist(png_paths):
+    #    n_iter += 1
+    print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
+    exec_igv_cmd(cmd)
+    #if all_png_paths_exist(png_paths) and n_iter == 0:
+    #    print(f'[LOG:{time.ctime()}] all png files already exist')
+    #    if args.overwrite:
+    #        rm_existing_pngs(png_paths)
+    #        while not all_png_paths_exist(png_paths):
+    #            n_iter += 1
+    #            print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
+    #            exec_igv_cmd(cmd)
 
     rmbatch = sp.Popen(f'rm {tmp_batchname}', stdout=sp.PIPE, shell=True)
     rmbatch_stdout = rmbatch.communicate()[0].strip()
