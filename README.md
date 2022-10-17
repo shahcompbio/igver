@@ -2,6 +2,7 @@
 Conveniently take IGV snapshots in multiple bam files over mutliple regions 
 
 # Prerequisites
+The standard say of running `shoot_igv.py` is through singularity. But if you have `xvfb-run` installed you can use it as is.
 You need to have a `$HOME/igv` directory with `genomes/hg19.genome` for hg19 or some other genome of your choosing inside it.
 
 # Usage
@@ -42,7 +43,12 @@ sort READNAME
 An example command getting two bam files as input, to be displayed vertically in the order put in (i.e. top panel: `haplotag_tumor.bam`, bottom panel: `haplotag_normal.bam`).
 `test/tag_haplotype.batch` includes additional IGV preferences to group and color haplotagged reads.
 ```bash
-./shoot_igv.py --bam test/test_tumor.bam test/test_normal.bam -r test/region.txt -o test/snapshots -mph 500 -od squish --config test/tag_haplotype.batch
+singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
+    --bam test/test_tumor.bam test/test_normal.bam \
+    -r test/region.txt \
+    -o test/snapshots \
+    -mph 500 -od squish \
+    --config test/tag_haplotype.batch
 ```
 1. The first region will take a 1001bp snapshot on the region coined "region of interest", and create a png file `1-122535169-112537169.region_of_interest.tumor.png` in the OUTDIR.
 2. The second region will take a 1001bp snapshot on the two breakpoints of the translocation, and create a png file `8-32534767-32536767.19-11137898-11139898.translocation.tumor.png` in the OUTDIR.
