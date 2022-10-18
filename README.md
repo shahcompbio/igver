@@ -2,8 +2,11 @@
 Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 
 # Prerequisites
-- The standard way of running `shoot_igv.py` is through singularity. But if you have `xvfb-run` installed you can use it as is.
+- The standard way of running `shoot_igv.py` is through singularity. But if you have `xvfb-run` installed you can use it without singularity. `shoot_igv.py` only uses Python 3 standard libraries so you don't need to install anything else.
 - You need to have a `$HOME/igv` directory with `genomes/hg19.genome` for hg19 or some other genome of your choosing inside it.
+
+# Call for help
+- Shoot IGV isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
 
 # Usage
 - `./shoot_igv.py --help` gives:
@@ -54,7 +57,7 @@ singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
 - The regions file for the test case, `test/region.txt`, includes 4 lines of different regions. The number of regions in the same line will lead to a snapshot with the regions horizontally aligned. You can annotate the region with an optional final field, which you can omit.
 - Here's the content of `test/region.txt` and some explanation below.
 ```
-8:32534767-32536767 region_of_iterest
+8:32534767-32536767 region_of_interest
 8:32534767-32536767 19:11137898-11139898 translocation
 19:16780041-16782041 19:17553189-17555189 inversion
 19:12874447-12876447 19:13500000-13501000 19:14461465-14463465 duplication
@@ -68,7 +71,7 @@ singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
 # Example results
 - You can see the IGV snapshots already taken using the script above in `test/snapshots`.
 
-1. [region_of_iterest](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png) <br>
+1. [region_of_interest](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png) <br>
 ![](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png)
 2. [translocation](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png) <br>
 ![](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png)
