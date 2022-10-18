@@ -75,6 +75,7 @@ def make_batchfile(args):
             batch.write(f'goto {regions}\n') # goto region1 region2 ...
             if args.overlap_display != 'expand':
                 batch.write(f'{args.overlap_display}\n') # expand squish collapse
+            #batch.write(f'preference IGV.Bounds 0,0,1280,480\n') 
             batch.write(f'maxPanelHeight {args.max_panel_height}\n') 
             if additional_pref:
                 batch.write(additional_pref)
@@ -117,7 +118,7 @@ def run_igv(args):
     assert args.overlap_display in display_modes, f'[ERROR:{time.ctime()}] {args.overlap_display} not in {display_modes}'
 
     tmp_batchname, png_paths = make_batchfile(args)
-    cmd = f'xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" {igv_runfile} -b {tmp_batchname}'
+    cmd = f'xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {tmp_batchname}'
     print(f'[LOG:{time.ctime()}] command:\n{cmd}')
     n_iter = 0
     while not all_png_paths_exist(png_paths):

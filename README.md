@@ -43,6 +43,9 @@ colorBy TAG rl
 sort READNAME
 ```
 
+### Caveat: setting IGV screenshot width
+- AFAIK, the only way to modify the batch screenshot width is by modifying your `$HOME/igv/prefs.properties` file. There is a line that looks something like `IGV.Bounds=0,0,640,480`, meaning that IGV set the bounds of the left, top, width, height (refer to https://github.com/igvteam/igv/issues/161). I've tried to override this but seems that it doesn't work that way. For the example below, I've fixed my prefs.properties file so that the screenshot width is 800 (i.e. set `IGV.Bounds=0,0,800,480`).
+
 ## Run example
 - An example command getting two bam files as inputr, displayed vertically in the order put in (i.e. top panel: `haplotag_tumor.bam`, bottom panel: `haplotag_normal.bam`), is as follows.
 - Here, `test/tag_haplotype.batch` includes additional IGV preferences to group and color haplotagged reads, as written above.
