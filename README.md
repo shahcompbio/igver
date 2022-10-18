@@ -1,14 +1,14 @@
 # Shoot IGV
 Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 
-# Prerequisites
+## Prerequisites
 - The standard way of running `shoot_igv.py` is through singularity. But if you have `xvfb-run` installed you can use it without singularity. `shoot_igv.py` only uses Python 3 standard libraries so you don't need to install anything else.
 - You need to have a `$HOME/igv` directory with `genomes/hg19.genome` for hg19 or some other genome of your choosing inside it.
 
-# Call for help
+## Call for help
 - Shoot IGV isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
 
-# Usage
+## Usage
 - `./shoot_igv.py --help` gives:
 ```bash
 usage: shoot_igv.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-t TAG]
@@ -35,7 +35,7 @@ optional arguments:
   --config CONFIG       Additional preferences [default: None]
 ```
 
-## Additional IGV preferences
+### Additional IGV preferences
 - You can plug in additional IGV preferences as in https://github.com/igvteam/igv/wiki/Batch-commands -- an example would be `test/tag_haplotype.batch`:
 ```
 group TAG HP
@@ -43,7 +43,7 @@ colorBy TAG rl
 sort READNAME
 ```
 
-# Run example
+## Run example
 - An example command getting two bam files as inputr, displayed vertically in the order put in (i.e. top panel: `haplotag_tumor.bam`, bottom panel: `haplotag_normal.bam`), is as follows.
 - Here, `test/tag_haplotype.batch` includes additional IGV preferences to group and color haplotagged reads, as written above.
 ```bash
@@ -68,7 +68,7 @@ singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
 4. The fourth region will take a 1001bp snapshot on the two breakpoints and a region inbetween, and create a png file `19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png` in the OUTDIR.
 - You can see that the png files in OUTDIR includes `.tumor` as a suffix. This is because the default TAG of the `--tag / -t` option is "tumor". You can set it to "None" to omit tagging the suffix.
 
-# Example results
+## Example results
 - You can see the IGV snapshots already taken using the script above in `test/snapshots`.
 
 1. [region_of_interest](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png) <br>
