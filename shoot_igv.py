@@ -43,7 +43,7 @@ def parse_multiregion_from_regfile_line(line):
     return regions, out_tag
 
 def make_png_filename(out_tag, args_tag=None):
-    if args_tag:
+    if args_tag != "None":
         out_tag += f'.{args.tag}' # e.g. tumor, normal
     png_fname = f'{out_tag}.png'
     return png_fname
