@@ -24,6 +24,8 @@ def parse_args():
     return p.parse_args()
 
 def parse_multiregion_from_regfile_line(line):
+    """Parse region and tag from regions file line
+    """
     out_tag = ''
     sv_tag = ''
     field = line.strip().split() # split by either ' ' or '\t'
@@ -43,12 +45,16 @@ def parse_multiregion_from_regfile_line(line):
     return regions, out_tag
 
 def make_png_filename(out_tag, args_tag=None):
+    """Return png filename from out_tag
+    """
     if args_tag != "None":
         out_tag += f'.{args.tag}' # e.g. tumor, normal
     png_fname = f'{out_tag}.png'
     return png_fname
 
 def get_additional_preferences(config):
+    """Return IGV preferences to insert from given config
+    """
     if config:
         assert os.path.exists(config), f'[ERROR:{time.ctime()}] Additional preferences file {config} does not exist'
         additional_pref = open(config, 'r').read().rstrip()
@@ -56,6 +62,8 @@ def get_additional_preferences(config):
     return None
 
 def make_batchfile(args):
+    """Create IGV batchfile for automated screenshots
+    """
     # get additional preferences
     additional_pref = get_additional_preferences(args.config)
     # create batch file
@@ -87,6 +95,8 @@ def make_batchfile(args):
     return tmp_batchname, png_paths
 
 def all_png_paths_exist(png_paths):
+    """Check if all png files in input list exist
+    """
     all_exists = True
     for png_path in png_paths:
         if not os.path.exists(png_path):
@@ -94,24 +104,32 @@ def all_png_paths_exist(png_paths):
     return all_exists
 
 def make_outdir_if_absent(outdir):
+    """Create outdir if absent
+    """
     if not os.path.exists(outdir):
         mkdir = sp.Popen(f'mkdir {outdir}', stdout=sp.PIPE, shell=True)
         mkdir_stdout = mkdir.communicate()[0].strip()
         print(f'[LOG:{time.ctime()}] mkdir {outdir}; STDOUT: {mkdir_stdout}')
 
 def exec_igv_cmd(cmd):
+    """Open subprocess for cmd, execute, print stdout
+    """
     igvcmd = sp.Popen(cmd, stdout=sp.PIPE, shell=True)
     proc_stdout = igvcmd.communicate()[0].strip()
     print(f'[LOG:{time.ctime()}] igv log:\n', proc_stdout.decode('utf-8'))
 
-def rm_existing_pngs(png_paths):
-    for png_path in png_paths:
-        cmd = f'rm {png_path}'
+def rm_existing_files(file_paths):
+    """Remove all paths in input file list
+    """
+    for file_path in file_paths:
+        cmd = f'rm {file_path}'
         rmcmd = sp.Popen(cmd, stdout=sp.PIPE, shell=True)
         proc_stdout = rmcmd.communicate()[0].strip()
         print(f'[LOG:{time.ctime()}] {cmd}; STDOUT:', proc_stdout.decode('utf-8'))
 
 def run_igv(args):
+    """For bams and regions, make batchfile, run IGV, remove batchfile
+    """
     for bam in args.bam:
         assert os.path.exists(bam), f'[ERROR:{time.ctime()}] bam: {bam} does not exist'
     display_modes = ['expand', 'collapse', 'squish']
@@ -128,7 +146,7 @@ def run_igv(args):
     if all_png_paths_exist(png_paths) and n_iter == 0:
         print(f'[LOG:{time.ctime()}] all png files already exist')
         if args.overwrite:
-            rm_existing_pngs(png_paths)
+            rm_existing_files(png_paths)
             while not all_png_paths_exist(png_paths):
                 n_iter += 1
                 print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
