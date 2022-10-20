@@ -65,10 +65,10 @@ singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
 19:16780041-16782041 19:17553189-17555189 inversion
 19:12874447-12876447 19:13500000-13501000 19:14461465-14463465 duplication
 ```
-1. The first region will take a 2002bp snapshot on the region coined "region of interest", and create a png file `8-32534767-32536767.region_of_interest.tumor.png` in the OUTDIR.
-2. The second region will take a 2002bp snapshot on the two breakpoints of the translocation, and create a png file `8-32534767-32536767.19-11137898-11139898.translocation.tumor.png` in the OUTDIR.
-3. The third region will take a 2002bp snapshot on the two breakpoints of the inversion, and create a png file `19-16780041-16782041.19-17553189-17555189.inversion.tumor.png` in the OUTDIR.
-4. The fourth region will take a 2002bp snapshot on the two breakpoints and a region inbetween, and create a png file `19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png` in the OUTDIR.
+1. The first region will take a 1001bp;1001bp snapshot on the region coined "region of interest", and create a png file `8-32534767-32536767.region_of_interest.tumor.png` in the OUTDIR.
+2. The second region will take a 1001bp;1001bp snapshot on the two breakpoints of the translocation, and create a png file `8-32534767-32536767.19-11137898-11139898.translocation.tumor.png` in the OUTDIR.
+3. The third region will take a 1001bp;1001bp snapshot on the two breakpoints of the inversion, and create a png file `19-16780041-16782041.19-17553189-17555189.inversion.tumor.png` in the OUTDIR.
+4. The fourth region will take a 1001bp;1001bp;1001bp snapshot on the two breakpoints and a region inbetween, and create a png file `19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png` in the OUTDIR.
 - You can see that the png files in OUTDIR includes `.tumor` as a suffix. This is because the default TAG of the `--tag / -t` option is "tumor". You can set it to "None" to omit tagging the suffix.
 
 ## Example results
