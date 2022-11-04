@@ -7,18 +7,17 @@ import uuid
 import argparse
 import subprocess as sp
 
-igv_runfile = '/IGV_Linux_2.14.1/igv.sh'
-
 def parse_args():
     description = 'Create temporary batchfile and run IGV for a region list'
     p = argparse.ArgumentParser(description=description)
     p.add_argument('--bam', nargs='+', help="Input tumor bam file(s) to be shown vertically", required=True)
     p.add_argument('-r', '--regions', help="Either a 'chr:start-end' string, or input regions file with region columns to be shown horizontally", required=True)
     p.add_argument('-o', '--outdir', help="Output png directory", required=True)
+    p.add_argument('-g', '--genome', help="Genome version [default: 'GRCh37']", default='GRCh37')
     p.add_argument('-t', '--tag', help="Tag to suffix your png file [default: 'tumor']", default='tumor')
     p.add_argument('-mph', '--max_panel_height', help="Max panel height [default: 200]", type=int, default=200)
     p.add_argument('-od', '--overlap_display', help="'expand', 'collapse' or 'squish'; [default: 'squish']", default='squish')
-    p.add_argument('--overwrite', help="Overwrite existing png files [default: False]", default=False, type=bool)
+    p.add_argument('--overwrite', help="Overwrite existing png files [default: False]", action="store_true")
     p.add_argument('--config', help="Additional preferences [default: None]", default=None)
 
     return p.parse_args()
@@ -73,7 +72,7 @@ def make_batchfile(args):
     with open(tmp_batchname, 'w') as batch:
         batch.write('new\n')
         batch.write(f'snapshotDirectory {args.outdir}\n')
-        batch.write('genome hg19\n') # TODO: check file
+        batch.write(f'genome {args.genome}\n') # TODO: check file
         for bam in args.bam: 
             batch.write(f'load {bam}\n')
         for line in open(args.regions, 'r'):
@@ -127,9 +126,22 @@ def rm_existing_files(file_paths):
         proc_stdout = rmcmd.communicate()[0].strip()
         print(f'[LOG:{time.ctime()}] {cmd}; STDOUT:', proc_stdout.decode('utf-8'))
 
+def get_genome(genome):
+    if genome == 'GRCh37' or genome == 'hg19':
+        return 'hg19'
+    elif genome == 'GRCh38' or genome == 'hg38':
+        return 'hg38'
+    else:
+        return genome
+
+
 def run_igv(args):
     """For bams and regions, make batchfile, run IGV, remove batchfile
     """
+    igv_runfile = '/IGV_Linux_2.14.1/igv.sh'
+    assert os.path.exists(igv_runfile), f"[ERROR:{time.ctime()}] {igv_runfile} does not exist"
+    args.genome = get_genome(args.genome)
+
     for bam in args.bam:
         assert os.path.exists(bam), f'[ERROR:{time.ctime()}] bam: {bam} does not exist'
     display_modes = ['expand', 'collapse', 'squish']
@@ -151,6 +163,8 @@ def run_igv(args):
                 n_iter += 1
                 print(f'[LOG:{time.ctime()}] iteration #{n_iter} to ensure all png files exist')
                 exec_igv_cmd(cmd)
+        if n_iter == 9:
+            sys.exit(f'[ERROR:{time.ctime()} 10th iteration failed -- check log. Killing job')
 
     rmbatch = sp.Popen(f'rm {tmp_batchname}', stdout=sp.PIPE, shell=True)
     rmbatch_stdout = rmbatch.communicate()[0].strip()

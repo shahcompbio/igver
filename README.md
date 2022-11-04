@@ -1,17 +1,17 @@
-# Shoot IGV
+# IGVer
 Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 
 ## Prerequisites
-- The standard way of running `shoot_igv.py` is through singularity. But if you have `xvfb-run` installed you can use it without singularity. `shoot_igv.py` only uses Python 3 standard libraries so you don't need to install anything else.
+- The standard way of running `igver.py` is through singularity. But if you have `xvfb-run` installed you can use it without singularity. `igver.py` only uses Python 3 standard libraries so you don't need to install anything else.
 - You need to have a `$HOME/igv` directory with `genomes/hg19.genome` for hg19 or some other genome of your choosing inside it.
 
 ## Call for help
-- Shoot IGV isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
+- IGVer isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
 
 ## Usage
-- `./shoot_igv.py --help` gives:
+- `./igver.py --help` gives:
 ```bash
-usage: shoot_igv.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-t TAG]
+usage: igver.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-t TAG]
                     [-mph MAX_PANEL_HEIGHT] [-od OVERLAP_DISPLAY]
                     [--overwrite OVERWRITE] [--config CONFIG]
 
@@ -50,7 +50,7 @@ sort READNAME
 - An example command getting two bam files as inputr, displayed vertically in the order put in (i.e. top panel: `haplotag_tumor.bam`, bottom panel: `haplotag_normal.bam`), is as follows.
 - Here, `test/tag_haplotype.batch` includes additional IGV preferences to group and color haplotagged reads, as written above.
 ```bash
-singularity run -B /juno docker://shahcompbio/igv ./shoot_igv.py \
+singularity run -B /juno docker://shahcompbio/igv ./igver.py \
     --bam test/test_tumor.bam test/test_normal.bam \
     -r test/region.txt \
     -o test/snapshots \
