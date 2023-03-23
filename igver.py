@@ -138,7 +138,7 @@ def get_genome(genome):
 def run_igv(args):
     """For bams and regions, make batchfile, run IGV, remove batchfile
     """
-    igv_runfile = '/IGV_Linux_2.14.1/igv.sh'
+    igv_runfile = 'igv.sh'
     assert os.path.exists(igv_runfile), f"[ERROR:{time.ctime()}] {igv_runfile} does not exist"
     args.genome = get_genome(args.genome)
 
