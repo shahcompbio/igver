@@ -33,3 +33,8 @@ ADD cytoBand.txt /opt/IGV_2.14.1/genomes/cytoBand.txt
 
 # set workdir
 WORKDIR /opt/IGV_2.14.1
+
+# download igver
+RUN apk add git && \
+    git clone https://github.com/shahcompbio/igver.git /opt/igver
+ENV PATH="$PATH:/opt/igver"
