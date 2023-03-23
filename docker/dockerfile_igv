@@ -24,17 +24,12 @@ RUN apk add wget xvfb xvfb-run
 RUN wget https://data.broadinstitute.org/igv/projects/downloads/2.14/IGV_2.14.1.zip && \
     unzip IGV_2.14.1.zip -d /opt && \
 	rm IGV_2.14.1.zip
-RUN apt-get install -y default-jre
-RUN wget https://igv.genepattern.org/genomes/seq/hg19/hg19.fasta -O hg19.fa && \
-	wget https://igv.genepattern.org/genomes/seq/hg19/hg19.fasta.fai -O hg19.fa.fai && \
-	wget https://igv.genepattern.org/genomes/seq/hg19/cytoBand.txt && \
-	wget https://github.com/broadinstitute/picard/releases/download/3.0.0/picard.jar && \
-	java -jar picard.jar CreateSequenceDictionary R=hg19.fa O=hg19.dict && \
-	mkdir -p /opt/IGV_2.14.1/genomes && \
-	mv hg19.* cytoBand* /opt/IGV_2.14.1/genomes/
+RUN mkdir -p /opt/IGV_2.14.1/genomes 
 
-#ADD /path/to/hg19.fa /opt/IGV_2.14.1/genomes/hg19.fa
-#ADD /path/to/hg19.fa.fai /opt/IGV_2.14.1/genomes/hg19.fa.fai
-#ADD /path/to/hg19.dict /opt/IGV_2.14.1/genomes/hg19.dict
+ADD hg19.fa /opt/IGV_2.14.1/genomes/hg19.fa
+ADD hg19.fa.fai /opt/IGV_2.14.1/genomes/hg19.fa.fai
+ADD hg19.dict /opt/IGV_2.14.1/genomes/hg19.dict
+ADD cytoBand.txt /opt/IGV_2.14.1/genomes/cytoBand.txt
 
-
+# set workdir
+WORKDIR /opt/IGV_2.14.1
