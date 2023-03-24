@@ -18,6 +18,7 @@ def parse_args():
     p.add_argument('-mph', '--max_panel_height', help="Max panel height [default: 200]", type=int, default=200)
     p.add_argument('-od', '--overlap_display', help="'expand', 'collapse' or 'squish'; [default: 'squish']", default='squish')
     p.add_argument('--overwrite', help="Overwrite existing png files [default: False]", action="store_true")
+    p.add_argument('-d', '--igv_dir', help="/path/to/IGV_x.xx.x", type=str, default="/opt/IGV_2.14.1")
     p.add_argument('--config', help="Additional preferences [default: None]", default=None)
 
     return p.parse_args()
@@ -138,7 +139,8 @@ def get_genome(genome):
 def run_igv(args):
     """For bams and regions, make batchfile, run IGV, remove batchfile
     """
-    igv_runfile = 'igv.sh'
+    assert os.path.exists(args.igv_dir), f"[ERROR:{time.ctime()}] {args.igv_dir} does not exist"
+    igv_runfile = f'{args.igv_dir}/igv.sh'
     assert os.path.exists(igv_runfile), f"[ERROR:{time.ctime()}] {igv_runfile} does not exist"
     args.genome = get_genome(args.genome)
 

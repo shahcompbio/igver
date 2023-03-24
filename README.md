@@ -2,18 +2,18 @@
 Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 
 ## Prerequisites
-- The standard way of running `igver.py` is through singularity. But if you have `xvfb-run` installed you can use it without singularity. `igver.py` only uses Python 3 standard libraries so you don't need to install anything else.
-- You need to have a `$HOME/igv` directory with `genomes/hg19.genome` for hg19 or some other genome of your choosing inside it.
+- The standard way of running `igver.py` is through docker or singularity. 
+- Currently only supporting GRCh37
 
 ## Call for help
 - IGVer isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
 
 ## Usage
-- `./igver.py --help` gives:
+- `igver.py --help` gives:
 ```bash
-usage: igver.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-t TAG]
-                    [-mph MAX_PANEL_HEIGHT] [-od OVERLAP_DISPLAY]
-                    [--overwrite OVERWRITE] [--config CONFIG]
+usage: igver.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-g GENOME]
+                [-t TAG] [-mph MAX_PANEL_HEIGHT] [-od OVERLAP_DISPLAY]
+                [--overwrite] [-d IGV_DIR] [--config CONFIG]
 
 Create temporary batchfile and run IGV for a region list
 
@@ -21,17 +21,20 @@ optional arguments:
   -h, --help            show this help message and exit
   --bam BAM [BAM ...]   Input tumor bam file(s) to be shown vertically
   -r REGIONS, --regions REGIONS
-                        Either 'chr:start-end' string, or input regions file
+                        Either a 'chr:start-end' string, or input regions file
                         with region columns to be shown horizontally
   -o OUTDIR, --outdir OUTDIR
                         Output png directory
+  -g GENOME, --genome GENOME
+                        Genome version [default: 'GRCh37']
   -t TAG, --tag TAG     Tag to suffix your png file [default: 'tumor']
   -mph MAX_PANEL_HEIGHT, --max_panel_height MAX_PANEL_HEIGHT
                         Max panel height [default: 200]
   -od OVERLAP_DISPLAY, --overlap_display OVERLAP_DISPLAY
                         'expand', 'collapse' or 'squish'; [default: 'squish']
-  --overwrite OVERWRITE
-                        Overwrite existing png files [default: False]
+  --overwrite           Overwrite existing png files [default: False]
+  -d IGV_DIR, --igv_dir IGV_DIR
+                        /path/to/IGV_x.xx.x
   --config CONFIG       Additional preferences [default: None]
 ```
 
@@ -44,13 +47,13 @@ sort READNAME
 ```
 
 ### Caveat: setting IGV screenshot width
-- AFAIK, the only way to modify the batch screenshot width is by modifying your `$HOME/igv/prefs.properties` file. There is a line that looks something like `IGV.Bounds=0,0,640,480`, meaning that IGV set the bounds of the left, top, width, height (refer to https://github.com/igvteam/igv/issues/161). I've tried to override this but seems that it doesn't work that way. For the example below, I've fixed my prefs.properties file so that the screenshot width is 800 (i.e. set `IGV.Bounds=0,0,800,480`).
+- AFAIK, the only way to modify the batch screenshot width is by modifying your `${IGV_DIR}/prefs.properties` file. There is a line that looks something like `IGV.Bounds=0,0,640,480`, meaning that IGV set the bounds of the left, top, width, height (refer to https://github.com/igvteam/igv/issues/161). I've tried to override this but seems that it doesn't work that way. For the example below, I've fixed my prefs.properties file so that the screenshot width is 800 (i.e. set `IGV.Bounds=0,0,800,480`).
 
 ## Run example
 - An example command getting two bam files as inputr, displayed vertically in the order put in (i.e. top panel: `haplotag_tumor.bam`, bottom panel: `haplotag_normal.bam`), is as follows.
 - Here, `test/tag_haplotype.batch` includes additional IGV preferences to group and color haplotagged reads, as written above.
 ```bash
-singularity run -B /juno docker://shahcompbio/igv ./igver.py \
+singularity run -B /juno docker://shahcompbio/igv igver.py \
     --bam test/test_tumor.bam test/test_normal.bam \
     -r test/region.txt \
     -o test/snapshots \
