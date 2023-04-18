@@ -3,7 +3,7 @@ Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 
 ## Prerequisites
 - The standard way of running `igver.py` is through docker or singularity. 
-- Currently only supporting GRCh37
+- Supports genomes listed in the [#hosted-genome-list](https://github.com/igvteam/igv/wiki/Downloading-Hosted-Genomes-for-Offline-Use#hosted-genome-list) from the IGV team.
 
 ## Call for help
 - IGVer isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
