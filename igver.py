@@ -150,7 +150,7 @@ def run_igv(args):
     assert args.overlap_display in display_modes, f'[ERROR:{time.ctime()}] {args.overlap_display} not in {display_modes}'
 
     tmp_batchname, png_paths = make_batchfile(args)
-    cmd = f'xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {tmp_batchname}'
+    cmd = f'xvfb-run --auto-display --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {tmp_batchname}'
     print(f'[LOG:{time.ctime()}] command:\n{cmd}')
     n_iter = 0
     while not all_png_paths_exist(png_paths):

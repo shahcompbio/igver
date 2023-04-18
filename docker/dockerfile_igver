@@ -1,5 +1,5 @@
-# docker build -f dockerfile_igv -t shahcompbio/igv .
-# docker push shahcompbio/igv
+# docker build -f dockerfile_igv -t shahcompbio/igver .
+# docker push shahcompbio/igver
 
 # setup: using archlinux because it was the only distro where I could find --auto-display
 FROM archlinux:latest
