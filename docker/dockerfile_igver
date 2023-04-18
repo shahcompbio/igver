@@ -1,4 +1,4 @@
-# docker build -f dockerfile_igv -t shahcompbio/igver .
+# docker build -f dockerfile_igver -t shahcompbio/igver .
 # docker push shahcompbio/igver
 
 # setup: using archlinux because it was the only distro where I could find --auto-display
@@ -14,13 +14,13 @@ RUN mkdir -p /opt/IGV_2.14.1/genomes
 
 WORKDIR /opt/IGV_2.14.1
 
-# download igver
-RUN git clone https://github.com/shahcompbio/igver.git /opt/igver
-ENV PATH="$PATH:/opt/igver:/opt/IGV_2.14.1"
-
 # font config
 RUN pacman -Syu --noconfirm  gnu-free-fonts opendesktop-fonts ttf-dejavu fontconfig
 RUN fc-cache -f -v
+
+# download igver
+RUN git clone https://github.com/shahcompbio/igver.git /opt/igver
+ENV PATH="$PATH:/opt/igver:/opt/IGV_2.14.1"
 
 # add genomes (from https://github.com/igvteam/igv/wiki/Downloading-Hosted-Genomes-for-Offline-Use#hosted-genome-list)
 ADD ASM294v2.json /opt/IGV_2.14.1/genomes/ASM294v2.json
