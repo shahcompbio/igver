@@ -53,3 +53,5 @@ ADD json/tair10.json /opt/IGV_2.14.1/genomes/tair10.json
 
 # custom genome (hs1 from https://s3.amazonaws.com/igv.org.genomes/genomes.json)
 ADD json/hs1.json /opt/IGV_2.14.1/genomes/hs1.json
+
+RUN chmod -R 777 /opt
