@@ -5,7 +5,7 @@ Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 - The standard way of running `igver.py` is through docker or singularity. 
 - Supports genomes listed in the [genomes.json](https://s3.amazonaws.com/igv.org.genomes/genomes.json) from the IGV team.
 
-## Python API Installation
+## Installation (Python API)
 You don't need to install `igver` using pip if you just want the CLI, but you need to install through `pip` if you want to use the python API.
 ```bash
 pip install igver
@@ -104,12 +104,20 @@ singularity run -B /juno docker://shahcompbio/igv igver.py \
 ## Example results
 - You can see the IGV snapshots already taken using the script above in `test/snapshots`.
 
-1. [region_of_interest](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png) <br>
-![](test/snapshots/8-32534767-32536767.region_of_interest.tumor.png)
-2. [translocation](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png) <br>
-![](test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png)
-3. [inversion](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png) <br>
-![](test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png)
-4. [duplication](test/snapshots/19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png)<br>
+1. **Region of interest**
+
+![](https://github.com/shahcompbio/igver/blob/main/test/snapshots/8-32534767-32536767.region_of_interest.tumor.png?raw=true)
+
+2. **Translocation**
+
+![](https://github.com/shahcompbio/igver/blob/main/test/snapshots/8-32534767-32536767.19-11137898-11139898.translocation.tumor.png?raw=true)
+
+3. **Inversion**
+
+![](https://github.com/shahcompbio/igver/blob/main/test/snapshots/19-16780041-16782041.19-17553189-17555189.inversion.tumor.png?raw=true)
+
+4. **Duplication**
+
 ![](test/snapshots/19-12874447-12876447.19-13500000-13501000.19-14461465-14463465.duplication.tumor.png)
+
 
