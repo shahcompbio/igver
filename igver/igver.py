@@ -71,6 +71,8 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
         # Remove the temp PNG if requested
         if remove_png:
             os.remove(png_path)
+            if debug:
+                print(f"[LOG:{time.ctime()}] Removed image {png_path}")
 
     return figures
 
