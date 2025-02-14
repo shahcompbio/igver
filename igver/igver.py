@@ -3,14 +3,14 @@ import os
 import subprocess
 import uuid
 import time
-from PIL import Image
 
+from PIL import Image
 import matplotlib.pyplot as plt
 
 
 def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_dir="/opt/IGV_2.14.1", 
-                    overwrite=True, remove_tempfiles=True, dpi=300,
-                    singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home',
+                    overwrite=True, remove_png=True, dpi=300,
+                    singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home',
                     debug=False):
     """
     Generates IGV screenshots and loads them into Matplotlib figures.
@@ -22,10 +22,10 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
         genome (str, optional): Genome version (default: "hg19").
         igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.14.1").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: True).
-        remove_tempfiles (bool, optional): Whether to remove created PNG files (default: True).
+        remove_png (bool, optional): Whether to remove created PNG files (default: True).
         dpi (int, optional): DPI of the figures (default: 300).
         singularity_image (str, optional): singularity image path (default: "docker://shahcompbio/igver").
-        singularity_args (str, optional): singularity arguments string (default: "-B /data1 -B /home").
+        singularity_args (str, optional): singularity arguments string (default: "-B /home").
         debug (bool, optional): Whether to show logs for debugging (default: False).
 
     Returns:
@@ -34,7 +34,16 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
     from .igver import create_batch_script, run_igv  # Import helper functions
 
     # Create batch script and expected PNG paths
+    tmpdir = os.getenv("TMPDIR", output_dir)  # Default to /tmp if TMPDIR is not set
+    if debug:
+        print(f"[LOG:{time.ctime()}] TMPDIR is set to: {tmpdir}")
     batch_script, png_paths = create_batch_script(bam_paths, regions, output_dir, genome)
+    bam_dirs = set([os.path.split(p)[0] for p in bam_paths])
+    for bam_dir in bam_dirs:
+        singularity_args += f' -B {bam_dir}'
+    singularity_args += f' -B {output_dir}'
+    if tmpdir != output_dir:
+        singularity_args += f' -B {tmpdir}'
 
     # Run IGV to generate the screenshots
     run_igv(batch_script, png_paths, igv_dir, overwrite, 
@@ -60,7 +69,7 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
         figures.append(fig)
 
         # Remove the temp PNG if requested
-        if remove_tempfiles:
+        if remove_png:
             os.remove(png_path)
 
     return figures
@@ -144,7 +153,7 @@ def create_batch_script(bam_paths, regions, output_dir, genome='hg19', tag='tumo
     os.makedirs(output_dir, exist_ok=True)
 
     # Generate a unique batch file name
-    batch_filename = f'_{uuid.uuid4()}.batch'
+    batch_filename = os.path.join(output_dir, f'_{uuid.uuid4()}.batch')
     
     # Read additional IGV preferences if provided
     additional_pref = ""
