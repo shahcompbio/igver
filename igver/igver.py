@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 
 def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_dir="/opt/IGV_2.14.1", 
                     overwrite=True, remove_tempfiles=True, dpi=300,
-                    singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home'):
+                    singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home',
+                    debug=False):
     """
     Generates IGV screenshots and loads them into Matplotlib figures.
 
@@ -25,6 +26,7 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
         dpi (int, optional): DPI of the figures (default: 300).
         singularity_image (str, optional): singularity image path (default: "docker://shahcompbio/igver").
         singularity_args (str, optional): singularity arguments string (default: "-B /data1 -B /home").
+        debug (bool, optional): Whether to show logs for debugging (default: False).
 
     Returns:
         list of matplotlib.figure.Figure: List of Matplotlib figures containing the IGV screenshots.
@@ -35,7 +37,8 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
     batch_script, png_paths = create_batch_script(bam_paths, regions, output_dir, genome)
 
     # Run IGV to generate the screenshots
-    run_igv(batch_script, png_paths, igv_dir, overwrite, singularity_image=singularity_image, singularity_args=singularity_args)
+    run_igv(batch_script, png_paths, igv_dir, overwrite, 
+        singularity_image=singularity_image, singularity_args=singularity_args, debug=debug)
 
     # Check if screenshots were generated
     if not png_paths:
@@ -64,7 +67,8 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
 
 
 def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.14.1", overwrite=False, 
-            singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home'):
+            singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home',
+            debug=False):
     """
     Runs IGV using the generated batch script and ensures all PNG screenshots are created.
 
@@ -73,6 +77,7 @@ def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.14.1", overwrite=False,
         png_paths (list of str): Expected paths of the output PNG screenshots.
         igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.14.1").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: False).
+        debug (bool, optional): Whether to show logs for debugging (default: False).
 
     Returns:
         list of str: Paths to the generated PNG files.
@@ -84,20 +89,23 @@ def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.14.1", overwrite=False,
     # IGV command
     cmd = f'xvfb-run --auto-display --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {batch_script} --igvDirectory {igv_dir}'
     cmd = f'singularity run {singularity_args} {singularity_image} {cmd}'
-    print(f"[LOG:{time.ctime()}] Running IGV command:\n{cmd}")
+    if debug:
+        print(f"[LOG:{time.ctime()}] Running IGV command:\n{cmd}")
 
     # If overwrite is enabled, remove existing PNG files
     if overwrite:
         for png_path in png_paths:
             if os.path.exists(png_path):
                 os.remove(png_path)
-                print(f"[LOG:{time.ctime()}] Removed existing {png_path}")
+                if debug:
+                    print(f"[LOG:{time.ctime()}] Removed existing {png_path}")
 
     # Run IGV
     n_iter = 0
     max_iter = 10
     while not all(os.path.exists(png) for png in png_paths) and n_iter < max_iter:
-        print(f"[LOG:{time.ctime()}] Iteration #{n_iter + 1}: Ensuring PNG files exist")
+        if debug:
+            print(f"[LOG:{time.ctime()}] Iteration #{n_iter + 1}: Ensuring PNG files exist")
         subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         n_iter += 1
 
@@ -106,7 +114,8 @@ def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.14.1", overwrite=False,
 
     # Cleanup batch script
     os.remove(batch_script)
-    print(f"[LOG:{time.ctime()}] Removed batch script {batch_script}")
+    if debug:
+        print(f"[LOG:{time.ctime()}] Removed batch script {batch_script}")
 
     return png_paths
 
