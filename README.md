@@ -5,10 +5,23 @@ Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 - The standard way of running `igver.py` is through docker or singularity. 
 - Supports genomes listed in the [genomes.json](https://s3.amazonaws.com/igv.org.genomes/genomes.json) from the IGV team.
 
-## Call for help
-- IGVer isn't battle-hardened at all; any help/push/feedback will greatly help improving it! :pray:
+## Python API Installation
+You don't need to install `igver` using pip if you just want the CLI, but you need to install through `pip` if you want to use the python API.
+```bash
+pip install igver
+```
+
+## Features
+- Load BAM files and visualize genomic regions using IGV
+- Generate IGV batch scripts programmatically
+- Run IGV inside a Singularity container for reproducibility
+- Save IGV screenshots as high-resolution PNG files
+- Load screenshots directly into Matplotlib figures for visualization
 
 ## Usage
+
+### CLI
+
 - `igver.py --help` gives:
 ```bash
 usage: igver.py [-h] --bam BAM [BAM ...] -r REGIONS -o OUTDIR [-g GENOME]
@@ -37,6 +50,20 @@ optional arguments:
                         /path/to/IGV_x.xx.x
   --config CONFIG       Additional preferences [default: None]
 ```
+
+### Python API
+
+```
+from igver import load_screenshot
+
+bam_files = ["sample1.bam", "sample2.bam"]
+regions = ["chr1:100000-200000", "chr2:300000-400000"]
+
+figures = load_screenshot(bam_files, regions)
+for fig in figures:
+    fig.show()
+```
+
 
 ### Additional IGV preferences
 - You can plug in additional IGV preferences as in https://github.com/igvteam/igv/wiki/Batch-commands -- an example would be `test/tag_haplotype.batch`:
