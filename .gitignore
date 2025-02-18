@@ -182,3 +182,4 @@ results/
 data/
 logs/
 .snakemake/
+develop.sh

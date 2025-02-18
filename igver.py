@@ -11,7 +11,7 @@ def parse_args():
     description = 'Create temporary batchfile and run IGV for a region list'
     p = argparse.ArgumentParser(description=description)
     p.add_argument('--bam', nargs='+', help="Input tumor bam file(s) to be shown vertically", required=True)
-    p.add_argument('-r', '--regions', help="Either a 'chr:start-end' string, or input regions file with region columns to be shown horizontally", required=True)
+    p.add_argument('-r', '--regions', help="Either a 'chr:start-end [...]' string, or input regions file with region columns to be shown horizontally", required=True)
     p.add_argument('-o', '--outdir', help="Output png directory", required=True)
     p.add_argument('-g', '--genome', help="Genome version [default: 'GRCh37']", default='GRCh37')
     p.add_argument('-t', '--tag', help="Tag to suffix your png file [default: 'tumor']", default='tumor')
@@ -76,11 +76,19 @@ def make_batchfile(args):
         batch.write(f'genome {args.genome}\n') # TODO: check file
         for bam in args.bam: 
             batch.write(f'load {bam}\n')
-        for line in open(args.regions, 'r'):
-            # one snapshot per region[s]
-            regions, out_tag = parse_multiregion_from_regfile_line(line)
+
+            is_file = os.path.exists(args.regions)
+            if is_file:
+                for line in open(args.regions, 'r'):
+                    # one snapshot per region[s]
+                    regions, out_tag = parse_multiregion_from_regfile_line(line)
+                    batch.write(f'goto {regions}\n') # goto region1 region2 ...
+            else:
+                regions = args.regions
+                out_tag = args.regions.replace(':', '-').replace(' ', '.')
+                batch.write(f'goto {regions}\n') # goto region1 region2 ...
             png_fname = make_png_filename(out_tag, args_tag=args.tag)
-            batch.write(f'goto {regions}\n') # goto region1 region2 ...
+
             if args.overlap_display != 'expand':
                 batch.write(f'{args.overlap_display}\n') # expand squish collapse
             #batch.write(f'preference IGV.Bounds 0,0,1280,480\n') 
