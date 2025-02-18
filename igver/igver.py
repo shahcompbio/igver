@@ -41,8 +41,8 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
     batch_script, png_paths = create_batch_script(bam_paths, regions, output_dir, genome)
     bam_dirs = set([os.path.split(p)[0] for p in bam_paths])
     for bam_dir in bam_dirs:
-        singularity_args += f' -B {bam_dir}'
-    singularity_args += f' -B {output_dir}'
+        singularity_args += f' -B {os.path.abspath(bam_dir)}'
+    singularity_args += f' -B {os.path.abspath(output_dir)}'
     if tmpdir != output_dir:
         singularity_args += f' -B {tmpdir}'
 
