@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_dir="/opt/IGV_2.14.1", 
                     overwrite=True, remove_png=True, dpi=300,
                     singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home',
-                    debug=False):
+                    debug=False, **kwargs):
     """
     Generates IGV screenshots and loads them into Matplotlib figures.
 
@@ -27,6 +27,7 @@ def load_screenshot(bam_paths, regions, output_dir="/tmp", genome="hg19", igv_di
         singularity_image (str, optional): singularity image path (default: "docker://shahcompbio/igver").
         singularity_args (str, optional): singularity arguments string (default: "-B /home").
         debug (bool, optional): Whether to show logs for debugging (default: False).
+        **kwargs (optional): *kwargs* such as tag, max_panel_height, overlap_display, igv_config for create_batch_script
 
     Returns:
         list of matplotlib.figure.Figure: List of Matplotlib figures containing the IGV screenshots.
