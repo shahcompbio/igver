@@ -4,15 +4,19 @@ setup(
     name='igver',
     version='0.7',
     packages=find_packages(),
+    package_data={
+        'igver': ['data/genome_map.yaml'],
+    },
     install_requires=[
         'matplotlib',
         'Pillow',
-        'subprocess32; python_version<"3.5"'  # Optional: subprocess fix for older Python versions
+        'subprocess32; python_version<"3.5"',  # Optional: subprocess fix for older Python versions
+        'importlib_resources; python_version<"3.9"',  # Backport for older Python versions
     ],
     entry_points={
-        'console_scripts': [
-            'igver=igver.igver:main',  # If you want a CLI command
-        ],
+        "console_scripts": [
+            "igver=igver.cli:main"
+        ]
     },
     author='Seongmin Choi',
     author_email='soymintc@gmail.com',
