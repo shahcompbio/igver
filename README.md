@@ -5,8 +5,7 @@ Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 - The standard way of running `igver.py` is through docker or singularity. 
 - Supports genomes listed in the [genomes.json](https://s3.amazonaws.com/igv.org.genomes/genomes.json) from the IGV team.
 
-## Installation (Python API)
-You don't need to install `igver` using pip if you just want the CLI, but you need to install through `pip` if you want to use the python API.
+## Installation
 ```bash
 pip install igver
 ```
