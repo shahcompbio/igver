@@ -150,8 +150,6 @@ def _parse_region_string(region, output_dir, overlap_display='squish', max_panel
 
     png_paths = [png_path]
 
-    print('png_paths, region_content', png_paths, region_content)
-
     return png_paths, region_content
 
 
