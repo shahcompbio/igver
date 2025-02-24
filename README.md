@@ -9,10 +9,10 @@ Conveniently take IGV snapshots in multiple bam files over mutliple regions.
 ```bash
 pip install igver
 ```
-I would also suggest you pull the IGVer singularity container so it's saved to your cache, as follows. This is to ensure you're using an environment where 
+I would also suggest you pull the IGVer singularity container so it's saved to your cache, as follows. This is to ensure you're using an environment where the following are present. Also, since `igver` functions will invoke `singularity` anyways, pulling the image allows you to use the cached image instead of having to pull the image on the fly.
 - `xvfb-run` (required to redirect IGV GUI to an image)
 - IGV jar files, and
-- IGV genome dictionaries (as in [IGV Hosted Genome List](https://github.com/igvteam/igv/wiki/Downloading-Hosted-Genomes-for-Offline-Use/26e9731ef36889a974b0b6fa94fce7b36d67543e#hosted-genome-list) are all present.
+- IGV genome dictionaries (as in [IGV Hosted Genome List](https://github.com/igvteam/igv/wiki/Downloading-Hosted-Genomes-for-Offline-Use/26e9731ef36889a974b0b6fa94fce7b36d67543e#hosted-genome-list)
 ```
 singularity pull docker://quay.io/soymintc/igver
 ```
