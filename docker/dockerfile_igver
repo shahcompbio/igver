@@ -1,10 +1,10 @@
-# docker build -f dockerfile_igver -t shahcompbio/igver .
-# docker push shahcompbio/igver
+# docker build -f dockerfile_igver -t quay.io/soymintc/igver .
+# docker push quay.io/soymintc/igver
 
 # setup: using archlinux because it was the only distro where I could find --auto-display
 FROM archlinux:latest
 
-RUN pacman -Syu --noconfirm  xorg-server-xvfb python wget pacman jre11-openjdk unzip git libxtst
+RUN pacman -Syu --noconfirm  xorg-server-xvfb python wget pacman jdk-openjdk unzip git libxtst
 
 # get IGV
 RUN wget https://data.broadinstitute.org/igv/projects/downloads/2.19/IGV_2.19.2.zip && \
