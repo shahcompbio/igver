@@ -1,0 +1,18 @@
+{
+  "id": "mm10",
+  "name": "Mouse (GRCm38/mm10)",
+  "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/mm10/mm10.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/mm10/mm10.fa.fai",
+  "cytobandURL": "https://s3.amazonaws.com/igv.broadinstitute.org/annotations/mm10/cytoBandIdeo.txt.gz",
+  "order": 1000000,
+  "tracks": [
+    {
+      "name": "Refseq Genes",
+      "format": "refgene",
+      "url": "https://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/ncbiRefSeq.txt.gz",
+      "indexed": false,
+      "removable": false,
+      "order": 1000000
+    }
+  ]
+}

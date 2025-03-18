@@ -67,7 +67,7 @@ options:
   -g GENOME, --genome GENOME
                         Genome reference (default: hg19)
   --dpi DPI             DPI for output images (default: 300)
-  --igv-dir IGV_DIR     Path to IGV installation (default: /opt/IGV_2.14.1)
+  --igv-dir IGV_DIR     Path to IGV installation (default: /opt/IGV_2.19.2)
   -p MAX_PANEL_HEIGHT, --max-panel-height MAX_PANEL_HEIGHT
                         Maximum panel height for IGV (default: 200).
   -d {expand,collapse,squish}, --overlap-display {expand,collapse,squish}
@@ -114,7 +114,7 @@ help(igver.load_screenshots)
 ```
 Will give you
 ```
-load_screenshot(paths, regions, output_dir='/tmp', genome='hg19', igv_dir='/opt/IGV_2.14.1', overwrite=True, remove_png=True, dpi=300, singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home', debug=False, **kwargs)
+load_screenshot(paths, regions, output_dir='/tmp', genome='hg19', igv_dir='/opt/IGV_2.19.2', overwrite=True, remove_png=True, dpi=300, singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home', debug=False, **kwargs)
     Generates IGV screenshots and loads them into a Matplotlib figure.
     
     Parameters:
@@ -122,7 +122,7 @@ load_screenshot(paths, regions, output_dir='/tmp', genome='hg19', igv_dir='/opt/
         regions (list of str): List of genomic regions in 'chr:start-end' format.
         output_dir (str, optional): Directory for output screenshots (default: "/tmp").
         genome (str, optional): Genome version (default: "hg19").
-        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.14.1").
+        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.19.2").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: True).
         remove_png (bool, optional): Whether to remove created PNG files (default: True).
         dpi (int, optional): DPI of the figure (default: 300).

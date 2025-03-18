@@ -1,0 +1,27 @@
+{
+  "id": "rn6",
+  "name": "Rat (RGCS 6.0/rn6)",
+  "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/rn6/rn6.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/rn6/rn6.fa.fai",
+  "cytobandURL": "https://s3.amazonaws.com/igv.org.genomes/rn6/cytoBand.txt.gz",
+  "order": 1000000,
+  "tracks": [
+    {
+      "name": "Refseq Genes",
+      "format": "refgene",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/rn6/ncbiRefSeq.sorted.txt.gz",
+      "indexURL": "https://s3.amazonaws.com/igv.org.genomes/rn6/ncbiRefSeq.sorted.txt.gz.tbi",
+      "order": 1000000,
+      "removable": false,
+      "supportsWholeGenome": false,
+      "visibilityWindow": -1
+    },
+    {
+      "name": "Genes",
+      "format": "bed",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/locations/geneLocations_rn6.bed.gz",
+      "hidden" : true,
+      "searchable": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "canFam5",
+  "name": "Dog (canFam5) ",
+  "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/canFam5/canFam5.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.org.genomes/canFam5/canFam5.fa.fai",
+  "cytobandURL": "https://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/cytoBandIdeo.txt.gz",
+  "aliasURL": "https://s3.amazonaws.com/igv.org.genomes/canFam5/chrAlias.tab.gz",
+  "tracks": [
+    {
+      "name": "Genes",
+      "format": "refgene",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/canFam5/refGene.txt.gz",
+      "indexURL": "https://s3.amazonaws.com/igv.org.genomes/canFam5/refGene.txt.gz.tbi",
+      "removable": false,
+      "order": 1000000
+    },
+    {
+      "name": "Genes",
+      "format": "bed",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/locations/geneLocations_canFam5.bed.gz",
+      "hidden" : true,
+      "searchable": true
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "tair10",
+  "name": "A. thaliana (TAIR 10)",
+  "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/tair10/TAIR10_chr_all.fas",
+  "indexURL": "https://s3.amazonaws.com/igv.org.genomes/tair10/TAIR10_chr_all.fas.fai",
+  "aliasURL": "https://s3.amazonaws.com/igv.org.genomes/tair10/TAIR10_alias.tab",
+  "tracks": [
+    {
+      "name": "Genes",
+      "format": "gff3",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/tair10/TAIR10_GFF3_genes.gff",
+      "indexed": false,
+      "removable": false,
+      "order": 1000000,
+      "searchable": true
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "danRer11",
+  "name": "Zebrafish (GRCZ11/danRer11)",
+  "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/danRer11/danRer11.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.org.genomes/danRer11/danRer11.fa.fai",
+  "cytobandURL": "https://s3.amazonaws.com/igv.org.genomes/danRer11/cytoBandIdeo.txt.gz",
+  "aliasURL": "https://s3.amazonaws.com/igv.org.genomes/danRer11/chromAlias.txt.gz",
+  "tracks": [
+    {
+      "name": "Refseq Genes",
+      "format": "refgene",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/danRer11/ncbiRefSeq.sorted.txt.gz",
+      "indexURL": "https://s3.amazonaws.com/igv.org.genomes/danRer11/ncbiRefSeq.sorted.txt.gz.tbi",
+
+      "order": 1000000,
+      "removable": false,
+      "visibilityWindow": -1
+    },
+    {
+      "name": "Genes",
+      "format": "bed",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/locations/geneLocations_danRer11.bed.gz",
+      "hidden" : true,
+      "searchable": true
+    }
+  ]
+}

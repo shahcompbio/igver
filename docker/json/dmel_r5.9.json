@@ -1,0 +1,17 @@
+{
+  "id": "dmel_r5.9",
+  "name": "D. melanogaster (dmel_r5.9)",
+  "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/dmel_r5.9/dmel-all-chromosome-r5.9.fasta",
+  "indexURL": "https://s3.amazonaws.com/igv.org.genomes/dmel_r5.9/dmel-all-chromosome-r5.9.fasta.fai",
+  "tracks": [
+    {
+      "name": "Transcripts",
+      "format": "gff3",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/dmel_r5.9/dmel-r5.9.transcripts.sorted.gff.gz",
+      "indexed": false,
+      "order": 1000000,
+      "removable": false,
+      "searchable": true
+    }
+  ]
+}

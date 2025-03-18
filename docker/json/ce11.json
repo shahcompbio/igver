@@ -1,0 +1,26 @@
+{
+  "id": "ce11",
+  "name": "C. elegans (ce11)",
+  "fastaURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/ce11/ce11.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/ce11/ce11.fa.fai",
+  "cytobandURL": "https://s3.amazonaws.com/igv.org.genomes/ce11/cytoBandIdeo.txt.gz",
+  "tracks": [
+    {
+      "name": "Refseq Genes",
+      "format": "refgene",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/ce11/refGene.sorted.txt.gz",
+      "indexURL": "https://s3.amazonaws.com/igv.org.genomes/ce11/refGene.sorted.txt.gz.tbi",
+      "indexed": false,
+      "order": 1000000,
+      "removable": false,
+      "visibilityWindow": -1
+    },
+    {
+      "name": "Genes",
+      "format": "bed",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/locations/geneLocations_ce11.bed.gz",
+      "hidden" : true,
+      "searchable": true
+    }
+  ]
+}

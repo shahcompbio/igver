@@ -1,0 +1,17 @@
+{
+  "id": "sacCer3",
+  "name": "S. cerevisiae (sacCer3)",
+  "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/sacCer3/sacCer3.fa",
+  "indexURL": "https://s3.amazonaws.com/igv.org.genomes/sacCer3/sacCer3.fa.fai",
+  "tracks": [
+    {
+      "name": "Refseq Genes",
+      "type": "annotation",
+      "format": "refgene",
+      "displayMode": "EXPANDED",
+      "url": "https://s3.amazonaws.com/igv.org.genomes/sacCer3/ncbiRefGene.txt.gz",
+      "indexed": false,
+      "searchable": true
+    }
+  ]
+}

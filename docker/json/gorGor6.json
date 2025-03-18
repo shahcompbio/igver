@@ -1,0 +1,25 @@
+{
+    "id": "gorGor6",
+    "name": "Gorilla (Kamilah_GGO_v0/gorGor6) ",
+    "fastaURL": "https://s3.amazonaws.com/igv.org.genomes/gorGor6/gorGor6.fa",
+    "indexURL": "https://s3.amazonaws.com/igv.org.genomes/gorGor6/gorGor6.fa.fai",
+    "cytobandURL": "https://hgdownload.soe.ucsc.edu/goldenPath/gorGor6/database/cytoBandIdeo.txt.gz",
+    "aliasURL": "https://s3.amazonaws.com/igv.org.genomes/gorGor6/chrAlias.tab.gz",
+    "tracks": [
+        {
+            "name": "Refseq Genes",
+            "format": "refgene",
+            "url": "https://s3.amazonaws.com/igv.org.genomes/gorGor6/ncbiRefSeq.txt.gz",
+            "indexURL": "https://s3.amazonaws.com/igv.org.genomes/gorGor6/ncbiRefSeq.txt.gz.tbi",
+            "removable": false,
+            "order": 1000000
+        },
+        {
+            "name": "Genes",
+            "format": "bed",
+            "url": "https://s3.amazonaws.com/igv.org.genomes/locations/geneLocations_gorGor6.bed.gz",
+            "hidden" : true,
+            "searchable": true
+        }
+    ]
+}
