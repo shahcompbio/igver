@@ -31,7 +31,7 @@ def _get_figures(png_paths, remove_png, dpi, debug):
     return figures
 
 
-def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="/opt/IGV_2.19.2", 
+def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="/opt/IGV_2.17.4", 
                      overwrite=True, remove_png=True, dpi=300,
                      singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home',
                      debug=False, **kwargs):
@@ -43,7 +43,7 @@ def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="
         regions (list of str): List of genomic regions in 'chr:start-end' format.
         output_dir (str, optional): Directory for output screenshots (default: "/tmp").
         genome (str, optional): Genome version (default: "hg19").
-        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.19.2").
+        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.17.4").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: True).
         remove_png (bool, optional): Whether to remove created PNG files (default: True).
         dpi (int, optional): DPI of the figure (default: 300).
@@ -231,7 +231,7 @@ def _remove_previous_output(png_paths, debug=False):
                 print(f"[LOG:{time.ctime()}] Removed existing {png_path}")
 
 
-def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.19.2", overwrite=False, 
+def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.17.4", overwrite=False, 
             singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home',
             debug=False):
     """
@@ -240,7 +240,7 @@ def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.19.2", overwrite=False,
     Parameters:
         batch_script (str): Path to the IGV batch script.
         png_paths (list of str): Expected paths of the output PNG screenshot.
-        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.19.2").
+        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.17.4").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: False).
         debug (bool, optional): Whether to show logs for debugging (default: False).
 
