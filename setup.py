@@ -10,9 +10,13 @@ setup(
     install_requires=[
         'matplotlib',
         'Pillow',
+        'PyYAML',
         'subprocess32; python_version<"3.5"',  # Optional: subprocess fix for older Python versions
         'importlib_resources; python_version<"3.9"',  # Backport for older Python versions
     ],
+    extras_require={
+        'pdf': ['cairosvg'],  # Optional dependency for PDF output
+    },
     entry_points={
         "console_scripts": [
             "igver=igver.cli:main"
