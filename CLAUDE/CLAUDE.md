@@ -73,7 +73,7 @@ igver.create_batch_script(bam_paths, regions, genome, outdir)
 
 ### Container Architecture
 - Uses Singularity containers for reproducibility
-- Default image: `docker://quay.io/soymintc/igver`
+- Default image: `docker://sahuno/igver:latest`
 - Runs IGV 2.19.5 in headless mode using xvfb
 
 ## Genomics-Specific Considerations

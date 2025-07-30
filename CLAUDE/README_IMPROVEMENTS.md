@@ -6,7 +6,7 @@ Add a "Quick Start" section right after the features for users who want to get s
 ## Quick Start
 ```bash
 # Using Singularity (recommended for HPC)
-singularity exec docker://sahuno/igver:2.19.5 igver.py \
+singularity exec docker://sahuno/igver:latest igver.py \
   -i sample.bam -r "chr1:1000000-2000000" -o output/
 
 # Using local installation
@@ -17,7 +17,7 @@ igver -i sample.bam -r "chr1:1000000-2000000" -o output/
 ## 2. **Fix Container Image Reference**
 Update the old container reference:
 - Old: `docker://quay.io/soymintc/igver`
-- New: `docker://sahuno/igver:2.19.5`
+- New: `docker://sahuno/igver:latest` (using 'latest' tag ensures users always get the most recent bug fixes and improvements)
 
 ## 3. **Add Container Installation Section**
 Replace current installation section with clearer options:
@@ -27,10 +27,10 @@ Replace current installation section with clearer options:
 ### Option 1: Using Container (Recommended)
 ```bash
 # For Singularity/Apptainer
-singularity pull docker://sahuno/igver:2.19.5
+singularity pull docker://sahuno/igver:latest
 
 # For Docker
-docker pull sahuno/igver:2.19.5
+docker pull sahuno/igver:latest
 ```
 
 ### Option 2: Local Installation

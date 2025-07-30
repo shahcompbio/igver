@@ -87,8 +87,8 @@ Created comprehensive test suites:
 - Existing functionality maintained (backward compatible)
 
 ## Next Steps for Deployment
-1. Build new Docker image: `docker build -t quay.io/soymintc/igver docker/`
-2. Push to registry: `docker push quay.io/soymintc/igver`
+1. Build new Docker image: `docker build -t sahuno/igver:latest docker/`
+2. Push to registry: `docker push sahuno/igver:latest`
 3. Update version in `setup.py` to 0.2.0
 4. Create release notes
 5. Test with real genomics data

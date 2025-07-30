@@ -1,5 +1,5 @@
-# docker build -t quay.io/soymintc/igver .
-# docker push quay.io/soymintc/igver
+# docker build -t sahuno/igver:latest .
+# docker push sahuno/igver:latest
 
 # setup: using archlinux because it was the only distro where I could find --auto-display
 FROM archlinux:latest

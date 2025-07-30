@@ -179,7 +179,7 @@ pyrightconfig.json
 # Custom
 results/
 *.ipynb
-data/
+/data/
 logs/
 .snakemake/
 develop.sh

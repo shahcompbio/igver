@@ -1,0 +1,54 @@
+# Genome alias mapping for IGVer
+# Maps common genome aliases to IGV genome identifiers
+
+# Human genomes
+GRCh37: hg19
+GRCh38: hg38
+hg37: hg19
+b37: hg19
+
+# Mouse genomes  
+GRCm38: mm10
+GRCm39: mm39
+
+# Rat genomes
+Rnor_6.0: rn6
+
+# Dog genomes
+CanFam3.1: canFam3
+CanFam5: canFam5
+
+# Chicken genomes
+GRCg6a: galGal6
+
+# Zebrafish genomes
+GRCz10: danRer10
+GRCz11: danRer11
+
+# Drosophila genomes
+BDGP6: dm6
+BDGP5: dm3
+
+# C. elegans
+WBcel235: ce11
+
+# Yeast
+R64-1-1: sacCer3
+
+# Arabidopsis
+TAIR10: tair10
+
+# Cow genomes
+UMD3.1: bosTau8
+ARS-UCD1.2: bosTau9
+
+# Primates
+Mmul_8.0.1: macFas5
+Ggor_gorGor4: gorGor4
+Ggor_gorGor6: gorGor6
+Pan_tro_3.0: panTro4
+NHGRI_mPanPan1: panPan2
+
+# Special builds
+hs1: hs1
+hg38_1kg: hg38_1kg
