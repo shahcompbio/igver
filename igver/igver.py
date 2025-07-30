@@ -12,6 +12,34 @@ except ImportError:
     HAS_CAIROSVG = False
 
 
+def is_running_in_container():
+    """Detect if running inside a container (Docker or Singularity)"""
+    # Check environment variable first
+    if os.environ.get('IGVER_IN_CONTAINER', '').strip() == '1':
+        return True
+    if os.environ.get('IGVER_NO_SINGULARITY', '').strip() == '1':
+        return True
+    
+    # Check for Docker
+    if os.path.exists('/.dockerenv'):
+        return True
+    
+    # Check for Singularity
+    if os.environ.get('SINGULARITY_CONTAINER'):
+        return True
+    
+    # Check cgroup for docker/lxc
+    try:
+        with open('/proc/1/cgroup', 'r') as f:
+            content = f.read()
+            if 'docker' in content or 'lxc' in content:
+                return True
+    except:
+        pass
+    
+    return False
+
+
 def _get_figures(png_paths, remove_png, dpi, debug):
     figures = []
     for png_path in png_paths:
@@ -64,7 +92,7 @@ def _convert_svg_to_pdf(svg_paths, remove_svg, dpi, debug):
 def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="/opt/IGV_2.19.5", 
                      overwrite=True, remove_png=True, dpi=300,
                      singularity_image='docker://sahuno/igver:latest', singularity_args='-B /home',
-                     debug=False, output_format='png', **kwargs):
+                     debug=False, output_format='png', use_singularity=None, **kwargs):
     """
     Generates IGV screenshots and loads them into a Matplotlib figure.
 
@@ -111,7 +139,8 @@ def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="
     # Run IGV to generate the screenshots
     singularity_image = os.environ.get('IGVER_IMAGE', singularity_image)
     run_igv(batch_script, output_paths, igv_dir, overwrite, 
-        singularity_image=singularity_image, singularity_args=singularity_args, debug=debug)
+        singularity_image=singularity_image, singularity_args=singularity_args, 
+        debug=debug, use_singularity=use_singularity)
 
     # Check if screenshots were generated
     if not output_paths:
@@ -338,7 +367,7 @@ def _remove_previous_output(png_paths, debug=False):
 
 def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.19.5", overwrite=False, 
             singularity_image='docker://sahuno/igver:latest', singularity_args='-B /data1 -B /home',
-            debug=False):
+            debug=False, use_singularity=None):
     """
     Runs IGV using the generated batch script and ensures all PNG screenshots are created.
 
@@ -352,13 +381,26 @@ def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.19.5", overwrite=False,
     Returns:
         list of str: Paths to the generated PNG files.
     """
+    # Auto-detect if we should use singularity
+    if use_singularity is None:
+        use_singularity = not is_running_in_container()
+    
     # assert os.path.exists(igv_dir), f"[ERROR:{time.ctime()}] {igv_dir} does not exist"
     igv_runfile = os.path.join(igv_dir, "igv.sh")
     # assert os.path.exists(igv_runfile), f"[ERROR:{time.ctime()}] {igv_runfile} does not exist"
 
     # IGV command
     cmd = f'xvfb-run --auto-display --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {batch_script} --igvDirectory {igv_dir}'
-    cmd = f'singularity run {singularity_args} {singularity_image} {cmd}'
+    
+    # Only wrap with singularity if needed
+    if use_singularity:
+        cmd = f'singularity run {singularity_args} {singularity_image} {cmd}'
+        if debug:
+            print(f"[LOG:{time.ctime()}] Running IGV with Singularity")
+    else:
+        if debug:
+            print(f"[LOG:{time.ctime()}] Running IGV directly (container mode)")
+    
     if debug:
         print(f"[LOG:{time.ctime()}] Running IGV command:\n{cmd}")
 

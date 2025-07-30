@@ -69,6 +69,11 @@ def parse_args():
         "--debug", action="store_true", help="Enable debug logging"
     )
     parser.add_argument(
+        "--no-singularity", 
+        action="store_true", 
+        help="Run IGV directly without Singularity wrapper (auto-detected in containers)"
+    )
+    parser.add_argument(
         "-f", "--format",
         choices=["png", "svg", "pdf"],
         default="png",
@@ -115,6 +120,9 @@ def main():
             "remove_png": False,  # don't remove output images
             "debug": args.debug,
             "output_format": args.format,
+            "use_singularity": not args.no_singularity,
+            "singularity_image": args.singularity_image,
+            "singularity_args": args.singularity_args,
         }
 
         # Conditionally add `igv_config` if it's provided

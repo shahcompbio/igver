@@ -21,7 +21,10 @@ RUN fc-cache -f -v
 # install python packages
 RUN pacman -Syu --noconfirm python-pip python-yaml python-matplotlib python-pillow
 
-# download igver
+# Cache busting for git clone
+ARG CACHE_BUST=1
+
+# download igver (CACHE_BUST forces fresh clone)
 RUN git clone https://github.com/sahuno/igver.git /opt/igver
 
 # install igver and its dependencies (using --break-system-packages for Arch Linux)
@@ -35,6 +38,9 @@ RUN echo '#!/usr/bin/env python' > /opt/igver/igver.py && \
     chmod +x /opt/igver/igver.py
 
 ENV PATH="$PATH:/opt/igver:/opt/IGV_2.19.5"
+
+# Set environment to indicate we're in a container
+ENV IGVER_IN_CONTAINER=1
 
 # add genomes (from https://github.com/igvteam/igv/wiki/Downloading-Hosted-Genomes-for-Offline-Use/26e9731ef36889a974b0b6fa94fce7b36d67543e#hosted-genome-list)
 ADD json/ASM294v2.json /opt/IGV_2.19.5/genomes/ASM294v2.json
