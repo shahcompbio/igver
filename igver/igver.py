@@ -5,6 +5,39 @@ import time
 
 from PIL import Image
 import matplotlib.pyplot as plt
+try:
+    import cairosvg
+    HAS_CAIROSVG = True
+except ImportError:
+    HAS_CAIROSVG = False
+
+
+def is_running_in_container():
+    """Detect if running inside a container (Docker or Singularity)"""
+    # Check environment variable first
+    if os.environ.get('IGVER_IN_CONTAINER', '').strip() == '1':
+        return True
+    if os.environ.get('IGVER_NO_SINGULARITY', '').strip() == '1':
+        return True
+    
+    # Check for Docker
+    if os.path.exists('/.dockerenv'):
+        return True
+    
+    # Check for Singularity
+    if os.environ.get('SINGULARITY_CONTAINER'):
+        return True
+    
+    # Check cgroup for docker/lxc
+    try:
+        with open('/proc/1/cgroup', 'r') as f:
+            content = f.read()
+            if 'docker' in content or 'lxc' in content:
+                return True
+    except:
+        pass
+    
+    return False
 
 
 def _get_figures(png_paths, remove_png, dpi, debug):
@@ -31,10 +64,35 @@ def _get_figures(png_paths, remove_png, dpi, debug):
     return figures
 
 
-def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="/opt/IGV_2.17.4", 
+def _convert_svg_to_pdf(svg_paths, remove_svg, dpi, debug):
+    """Convert SVG files to PDF format"""
+    if not HAS_CAIROSVG:
+        raise ImportError("cairosvg is required for PDF output. Install with: pip install cairosvg")
+    
+    pdf_paths = []
+    for svg_path in svg_paths:
+        pdf_path = svg_path.replace('.svg', '.pdf')
+        
+        # Convert SVG to PDF
+        cairosvg.svg2pdf(url=svg_path, write_to=pdf_path, dpi=dpi)
+        pdf_paths.append(pdf_path)
+        
+        if debug:
+            print(f"[LOG:{time.ctime()}] Converted {svg_path} to {pdf_path}")
+        
+        # Remove SVG if requested
+        if remove_svg:
+            os.remove(svg_path)
+            if debug:
+                print(f"[LOG:{time.ctime()}] Removed SVG file {svg_path}")
+    
+    return pdf_paths
+
+
+def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="/opt/IGV_2.19.5", 
                      overwrite=True, remove_png=True, dpi=300,
-                     singularity_image='docker://quay.io/soymintc/igver', singularity_args='-B /home',
-                     debug=False, **kwargs):
+                     singularity_image='docker://sahuno/igver:latest', singularity_args='-B /home',
+                     debug=False, output_format='png', use_singularity=None, **kwargs):
     """
     Generates IGV screenshots and loads them into a Matplotlib figure.
 
@@ -43,13 +101,14 @@ def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="
         regions (list of str): List of genomic regions in 'chr:start-end' format.
         output_dir (str, optional): Directory for output screenshots (default: "/tmp").
         genome (str, optional): Genome version (default: "hg19").
-        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.17.4").
+        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.19.5").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: True).
         remove_png (bool, optional): Whether to remove created PNG files (default: True).
         dpi (int, optional): DPI of the figure (default: 300).
-        singularity_image (str, optional): singularity image path (default: "docker://quay.io/soymintc/igver").
+        singularity_image (str, optional): singularity image path (default: "docker://sahuno/igver:latest").
         singularity_args (str, optional): singularity arguments string (default: "-B /home").
         debug (bool, optional): Whether to show logs for debugging (default: False).
+        output_format (str, optional): Output image format - 'png', 'svg', or 'pdf' (default: 'png').
         **kwargs (optional): *kwargs* such as tag, max_panel_height, overlap_display, igv_config for create_batch_script
 
     Returns:
@@ -63,7 +122,9 @@ def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="
         output_dir = os.environ['TMPDIR']
     if debug:
         print(f"[LOG:{time.ctime()}] TMPDIR is set to: {tmpdir}")
-    batch_script, png_paths = create_batch_script(paths, regions, output_dir, genome, **kwargs)
+    # Pass output_format to create_batch_script
+    batch_script, output_paths = create_batch_script(paths, regions, output_dir, genome, 
+                                                     output_format=output_format, **kwargs)
     for path in paths:
         abspath = os.path.abspath(path)
         realpath = os.path.realpath(path)
@@ -77,22 +138,87 @@ def load_screenshots(paths, regions, output_dir='/tmp', genome="hg19", igv_dir="
 
     # Run IGV to generate the screenshots
     singularity_image = os.environ.get('IGVER_IMAGE', singularity_image)
-    run_igv(batch_script, png_paths, igv_dir, overwrite, 
-        singularity_image=singularity_image, singularity_args=singularity_args, debug=debug)
+    run_igv(batch_script, output_paths, igv_dir, overwrite, 
+        singularity_image=singularity_image, singularity_args=singularity_args, 
+        debug=debug, use_singularity=use_singularity)
 
     # Check if screenshots were generated
-    if not png_paths:
+    if not output_paths:
         raise RuntimeError("[ERROR] No screenshots generated.")
 
-    # Load each screenshot into a Matplotlib figure with high resolution
-    figures = _get_figures(png_paths, remove_png, dpi, debug)
+    # Handle different output formats
+    if output_format == 'pdf':
+        # For PDF, we need to convert from SVG
+        figures = _convert_svg_to_pdf(output_paths, remove_png, dpi, debug)
+    elif output_format == 'svg':
+        # For SVG, return the paths as figures are not needed
+        figures = output_paths  # Return paths instead of matplotlib figures
+    else:
+        # Load PNG screenshots into Matplotlib figures
+        figures = _get_figures(output_paths, remove_png, dpi, debug)
 
     return figures
 
 
-def _parse_region_file(region_file, output_dir, overlap_display='squish', max_panel_height=200, additional_pref=None, tag=None):
+def _parse_bed_file(bed_file, output_dir, overlap_display='squish', max_panel_height=200, additional_pref=None, tag=None, output_format='png'):
     """
-    Parse region and tag from line
+    Parse BED format file (BED3 or BED6) to extract regions
+    BED3: chrom, chromStart, chromEnd
+    BED6: chrom, chromStart, chromEnd, name, score, strand
+    """
+    png_paths = []
+    region_content = []
+    
+    with open(bed_file, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#') or line.startswith('track') or line.startswith('browser'):
+                continue
+                
+            fields = line.split('\t')
+            if len(fields) < 3:
+                continue
+                
+            chrom = fields[0]
+            start = fields[1]
+            end = fields[2]
+            
+            # Handle optional name field from BED6
+            region_name = ''
+            if len(fields) >= 4 and fields[3]:
+                region_name = fields[3]
+            
+            # Format region string
+            region = f"{chrom}:{start}-{end}"
+            region_tag = region.replace(':', '-')
+            
+            # Create filename with appropriate extension
+            ext = 'svg' if output_format in ['svg', 'pdf'] else output_format
+            if region_name:
+                png_fname = f"{region_tag}.{region_name}.{ext}"
+            elif tag:
+                png_fname = f"{region_tag}.{tag}.{ext}"
+            else:
+                png_fname = f"{region_tag}.{ext}"
+                
+            png_path = os.path.join(output_dir, png_fname)
+            png_paths.append(png_path)
+            
+            # Create batch content
+            region_content.append(f'goto {region}')
+            if overlap_display != 'expand':
+                region_content.append(overlap_display)
+            region_content.append(f'maxPanelHeight {max_panel_height}')
+            if additional_pref:
+                region_content.append(additional_pref)
+            region_content.append(f'snapshot {png_fname}')
+    
+    return png_paths, region_content
+
+
+def _parse_region_file(region_file, output_dir, overlap_display='squish', max_panel_height=200, additional_pref=None, tag=None, output_format='png'):
+    """
+    Parse region and tag from line (legacy text format)
     """
     png_paths = []
     region_content = []
@@ -114,7 +240,8 @@ def _parse_region_file(region_file, output_dir, overlap_display='squish', max_pa
         region = ' '.join(region)
         if sv_tag:
             out_tag += f'.{sv_tag}' # e.g. ins, del, translocation, ...
-        png_fname = out_tag + '.png'
+        ext = 'svg' if output_format in ['svg', 'pdf'] else output_format
+        png_fname = out_tag + f'.{ext}'
         png_path = os.path.join(output_dir, png_fname)
         png_paths.append(png_path)
         
@@ -129,15 +256,16 @@ def _parse_region_file(region_file, output_dir, overlap_display='squish', max_pa
     return png_paths, region_content
 
 
-def _parse_region_string(region, output_dir, overlap_display='squish', max_panel_height=200, additional_pref=None, tag=None):
+def _parse_region_string(region, output_dir, overlap_display='squish', max_panel_height=200, additional_pref=None, tag=None, output_format='png'):
     """
     Parse region and tag from cli argument
     """
     region_content = []
     region_tag = region.replace(':', '-').replace(' ', '.')
-    png_fname = f"{region_tag}.png"
+    ext = 'svg' if output_format in ['svg', 'pdf'] else output_format
+    png_fname = f"{region_tag}.{ext}"
     if tag:
-        png_fname = f"{region_tag}.{tag}.png"
+        png_fname = f"{region_tag}.{tag}.{ext}"
     png_path = os.path.join(output_dir, png_fname)
     
     region_content.append(f'goto {region}')
@@ -154,7 +282,7 @@ def _parse_region_string(region, output_dir, overlap_display='squish', max_panel
 
 
 def create_batch_script(paths, regions, output_dir, genome='hg19', tag=None, max_panel_height=200,
-                        overlap_display='squish', igv_config=None):
+                        overlap_display='squish', igv_config=None, output_format='png'):
     """
     Creates an IGV batch script to generate screenshots for the given BAM files and regions.
     
@@ -196,7 +324,8 @@ def create_batch_script(paths, regions, output_dir, genome='hg19', tag=None, max
     
     png_paths, region_content = _get_paths_and_regions(regions, 
         output_dir=output_dir, overlap_display=overlap_display, 
-        max_panel_height=max_panel_height, additional_pref=additional_pref, tag=tag)
+        max_panel_height=max_panel_height, additional_pref=additional_pref, tag=tag,
+        output_format=output_format)
     batch_content += region_content
     batch_content.append('exit')
     batch_text = '\n'.join(batch_content)
@@ -213,7 +342,12 @@ def _get_paths_and_regions(regions, **kwargs):
     region_content = []
     for region in regions:
         if os.path.exists(region): # input is region file
-            _png_paths, _region_content = _parse_region_file(region, **kwargs)
+            # Check if it's a BED file based on extension
+            if region.endswith('.bed'):
+                _png_paths, _region_content = _parse_bed_file(region, **kwargs)
+            else:
+                # Assume it's a text file with custom format
+                _png_paths, _region_content = _parse_region_file(region, **kwargs)
 
         else: # input is region argument(s)
             _png_paths, _region_content = _parse_region_string(region, **kwargs)
@@ -231,29 +365,42 @@ def _remove_previous_output(png_paths, debug=False):
                 print(f"[LOG:{time.ctime()}] Removed existing {png_path}")
 
 
-def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.17.4", overwrite=False, 
-            singularity_image='docker://shahcompbio/igver', singularity_args='-B /data1 -B /home',
-            debug=False):
+def run_igv(batch_script, png_paths, igv_dir="/opt/IGV_2.19.5", overwrite=False, 
+            singularity_image='docker://sahuno/igver:latest', singularity_args='-B /data1 -B /home',
+            debug=False, use_singularity=None):
     """
     Runs IGV using the generated batch script and ensures all PNG screenshots are created.
 
     Parameters:
         batch_script (str): Path to the IGV batch script.
         png_paths (list of str): Expected paths of the output PNG screenshot.
-        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.17.4").
+        igv_dir (str, optional): Directory containing IGV installation (default: "/opt/IGV_2.19.5").
         overwrite (bool, optional): Whether to overwrite existing PNG files (default: False).
         debug (bool, optional): Whether to show logs for debugging (default: False).
 
     Returns:
         list of str: Paths to the generated PNG files.
     """
+    # Auto-detect if we should use singularity
+    if use_singularity is None:
+        use_singularity = not is_running_in_container()
+    
     # assert os.path.exists(igv_dir), f"[ERROR:{time.ctime()}] {igv_dir} does not exist"
     igv_runfile = os.path.join(igv_dir, "igv.sh")
     # assert os.path.exists(igv_runfile), f"[ERROR:{time.ctime()}] {igv_runfile} does not exist"
 
     # IGV command
     cmd = f'xvfb-run --auto-display --server-args="-screen 0 1920x1080x24" {igv_runfile} -b {batch_script} --igvDirectory {igv_dir}'
-    cmd = f'singularity run {singularity_args} {singularity_image} {cmd}'
+    
+    # Only wrap with singularity if needed
+    if use_singularity:
+        cmd = f'singularity run {singularity_args} {singularity_image} {cmd}'
+        if debug:
+            print(f"[LOG:{time.ctime()}] Running IGV with Singularity")
+    else:
+        if debug:
+            print(f"[LOG:{time.ctime()}] Running IGV directly (container mode)")
+    
     if debug:
         print(f"[LOG:{time.ctime()}] Running IGV command:\n{cmd}")
 

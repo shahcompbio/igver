@@ -23,7 +23,7 @@ def parse_args():
         "-i", "--input", nargs="+", required=True, help="Input BAM, BEDPE, VCF, or bigWig file(s)"
     )
     parser.add_argument(
-        "-r", "--regions", nargs="+", required=True, help='Genomic regions (e.g., chr1:100000-200000) or regions file (e.g. region.txt)'
+        "-r", "--regions", nargs="+", required=True, help='Genomic regions (e.g., chr1:100000-200000) or regions file (e.g. region.txt or regions.bed)'
     )
     parser.add_argument(
         "-o", "--output", default="/tmp", help="Output directory for screenshots (default: /tmp)"
@@ -36,8 +36,8 @@ def parse_args():
     )
     parser.add_argument(
         "--igv-dir",
-        default="/opt/IGV_2.17.4", 
-        help="Path to IGV installation (default: /opt/IGV_2.17.4)"
+        default="/opt/IGV_2.19.5", 
+        help="Path to IGV installation (default: /opt/IGV_2.19.5)"
     )
     parser.add_argument(
         "-p", "--max-panel-height",
@@ -57,8 +57,8 @@ def parse_args():
     )
     parser.add_argument(
         "--singularity-image", 
-        default="docker://quay.io/soymintc/igver", 
-        help="`singularity` image path (default: docker://quay.io/soymintc/igver)"
+        default="docker://sahuno/igver:latest", 
+        help="`singularity` image path (default: docker://sahuno/igver:latest)"
     )
     parser.add_argument(
         "--singularity-args", 
@@ -67,6 +67,17 @@ def parse_args():
     )
     parser.add_argument(
         "--debug", action="store_true", help="Enable debug logging"
+    )
+    parser.add_argument(
+        "--no-singularity", 
+        action="store_true", 
+        help="Run IGV directly without Singularity wrapper (auto-detected in containers)"
+    )
+    parser.add_argument(
+        "-f", "--format",
+        choices=["png", "svg", "pdf"],
+        default="png",
+        help="Output image format (default: png). Note: pdf requires svg conversion."
     )
     args = parser.parse_args()
     return args
@@ -108,6 +119,10 @@ def main():
             "dpi": args.dpi,
             "remove_png": False,  # don't remove output images
             "debug": args.debug,
+            "output_format": args.format,
+            "use_singularity": not args.no_singularity,
+            "singularity_image": args.singularity_image,
+            "singularity_args": args.singularity_args,
         }
 
         # Conditionally add `igv_config` if it's provided

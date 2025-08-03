@@ -1,0 +1,23 @@
+# Docker Test Commands for IGVer
+# Run these commands from: /home/sahuno/apps/igver
+
+# 1. First, check if Docker can see the files:
+docker run --rm -v /home/sahuno/apps/igver:/workspace:ro sahuno/igver:latest ls -la /workspace/test/test_tumor.bam
+
+# 2. Test IGVer with absolute paths:
+mkdir -p /home/sahuno/apps/igver/docker_output
+docker run --rm \
+    -v /home/sahuno/apps/igver:/workspace:ro \
+    -v /home/sahuno/apps/igver/docker_output:/output \
+    sahuno/igver:latest \
+    igver -i /workspace/test/test_tumor.bam -r "8:32534767-32536767" -g hg19 -o /output/
+
+# 3. If that works, check the output:
+ls -la /home/sahuno/apps/igver/docker_output/
+
+# Alternative: If you're having permission issues, try with sudo:
+# sudo docker run --rm -v /home/sahuno/apps/igver:/workspace:ro sahuno/igver:latest ls -la /workspace/test/test_tumor.bam
+
+# Or add yourself to docker group (one-time setup):
+# sudo usermod -aG docker $USER
+# Then logout and login again

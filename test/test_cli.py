@@ -7,13 +7,13 @@ from PIL import Image, ImageChops
 TEST_BAM1 = "test/test_tumor.bam"  # Replace with actual test BAM file
 TEST_BAM2 = "test/test_normal.bam"  # Replace with actual test BAM file
 OUTPUT_DIR = "test/output"
-TMP_DIR = os.environ['TMPDIR']
+TMP_DIR = os.environ.get('TMPDIR', '/tmp')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 REGION = "8:32534767-32536767 19:11137898-11139898"
 FILENAME = "8-32534767-32536767.19-11137898-11139898.translocation.tumor.png"
 EXPECTED_IMAGE = os.path.join(OUTPUT_DIR, FILENAME.replace('.translocation', ''))
 BASELINE_IMAGE = os.path.join("test/snapshots", FILENAME)  # Pre-generated baseline image
-SINGULARITY_IMAGE = "docker://quay.io/soymintc/igver"
+SINGULARITY_IMAGE = "docker://sahuno/igver:latest"
 #  SINGULARITY_IMAGE = "/data1/shahs3/users/chois7/singularity/sifs/igver-latest.sif"
 SINGULARITY_BIND_DIR = os.path.abspath(".")
 

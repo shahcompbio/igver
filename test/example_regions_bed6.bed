@@ -1,0 +1,8 @@
+# Example BED6 format file for IGVer
+# Format: chromosome<TAB>start<TAB>end<TAB>name<TAB>score<TAB>strand
+# The name field will be included in the output filename
+chr1	1000000	2000000	BRCA1_region	1000	+
+chr2	5000000	6000000	TP53_region	800	-
+chr3	10000000	11000000	EGFR_amplification	1200	+
+chrX	50000000	51000000	DMD_deletion	500	-
+chr7	55200000	55300000	EGFR_variant	900	+
