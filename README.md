@@ -45,36 +45,61 @@ Conveniently take IGV snapshots of multiple BAM files over multiple genomic regi
 
 ## Installation
 
-### Option 1: Using Container (Recommended for HPC)
+### Option 1: Using Container (Recommended)
 ```bash
-# For Singularity/Apptainer
-singularity pull docker://sahuno/igver:latest
-
 # For Docker
 docker pull sahuno/igver:latest
+
+# For Singularity/Apptainer
+singularity pull docker://sahuno/igver:latest
 ```
 
-**Note**: Specific versions are available starting from `igver:2.19.5`
+**Available versions:**
+- `sahuno/igver:latest` - Always the most recent version (recommended)
+- `sahuno/igver:2.19.5` - Specific version with IGV 2.19.5
 
 ### Option 2: Local Installation
 ```bash
 pip install igver
 ```
-**Note**: Local installation still requires Singularity or Docker to run IGV.
+**Note**: Local installation still requires Singularity to run IGV.
+
+### Container Usage Important Notes
+
+**Docker**: Works automatically - the container environment is auto-detected.
+
+**Singularity**: You MUST use the `--no-singularity` flag to prevent nested container issues:
+```bash
+singularity exec docker://sahuno/igver:latest igver ... --no-singularity
+```
+
+This is because IGVer was originally designed to wrap IGV in a Singularity container, but when IGVer itself runs in a container, this creates a nested container problem.
 
 ## Quick Start
 
 ```bash
-# Using Singularity (recommended for HPC)
-singularity exec docker://sahuno/igver:latest igver.py \
-  -i sample.bam -r "chr1:1000000-2000000" -o output/
+# Using Docker
+docker run --rm \
+  -v $(pwd):/data \
+  -v $(pwd)/output:/output \
+  sahuno/igver:latest \
+  igver -i /data/sample.bam -r "chr1:1000000-2000000" -o /output/
 
-# Using local installation
+# Using Singularity (IMPORTANT: use --no-singularity flag)
+singularity exec \
+  -B $(pwd):/data \
+  -B $(pwd)/output:/output \
+  docker://sahuno/igver:latest \
+  igver -i /data/sample.bam -r "chr1:1000000-2000000" -o /output/ --no-singularity
+
+# Using local installation (requires Singularity)
 igver -i sample.bam -r "chr1:1000000-2000000" -o output/
 
 # Using BED file for regions
-igver -i sample.bam -r regions.bed -o output/
+igver -i sample.bam -r regions.bed -o output/ --no-singularity
 ```
+
+**Important Note for Container Users**: When running IGVer inside a container (Docker or Singularity), you must use the `--no-singularity` flag with Singularity to prevent nested container execution. Docker automatically detects the container environment.
 
 ## Usage
 
@@ -133,6 +158,7 @@ Options:
   -c, --igv-config    Custom IGV preferences file
   -f, --format        Output format: png/svg/pdf (default: png)
   --singularity-image Container image (default: docker://sahuno/igver:latest)
+  --no-singularity    Run IGV directly without Singularity wrapper (required when using Singularity)
   --debug             Enable debug logging
 ```
 
@@ -289,10 +315,17 @@ for bam in bam_files:
 ## Troubleshooting
 
 ### Container Issues
-- **Permission denied**: Add `--bind` flags for your data directories
+- **"singularity: command not found" error when using Singularity**: You must use the `--no-singularity` flag:
   ```bash
-  singularity exec --bind /data,/home docker://sahuno/igver:latest igver.py ...
+  singularity exec docker://sahuno/igver:latest igver ... --no-singularity
   ```
+  This prevents IGVer from trying to run Singularity inside the container.
+
+- **Permission denied**: Add bind flags for your data directories
+  ```bash
+  singularity exec -B /data,/home docker://sahuno/igver:latest igver ... --no-singularity
+  ```
+
 - **Image not found**: Pull the image first
   ```bash
   singularity pull docker://sahuno/igver:latest

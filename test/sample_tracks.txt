@@ -1,0 +1,21 @@
+# Sample input file for igver --input parameter
+# This file demonstrates the new .txt file input feature
+# Lines starting with # are treated as comments
+# Empty lines are ignored
+
+# Test BAM files (update paths as needed)
+test/test_tumor.bam
+test/test_normal.bam
+
+# You can also use absolute paths
+# /absolute/path/to/sample1.bam
+# /absolute/path/to/sample2.bam
+
+# Paths with ~ are expanded to home directory
+# ~/data/my_sample.bam
+
+# Supported file types:
+# - BAM files (requires .bai index)
+# - BEDPE files
+# - VCF files  
+# - bigWig files

@@ -20,7 +20,8 @@ def parse_args():
         description="IGVer: A tool for generating IGV screenshots"
     )
     parser.add_argument(
-        "-i", "--input", nargs="+", required=True, help="Input BAM, BEDPE, VCF, or bigWig file(s)"
+        "-i", "--input", nargs="+", required=True, 
+        help="Input BAM, BEDPE, VCF, or bigWig file(s), or a .txt file containing paths (one per line)"
     )
     parser.add_argument(
         "-r", "--regions", nargs="+", required=True, help='Genomic regions (e.g., chr1:100000-200000) or regions file (e.g. region.txt or regions.bed)'
@@ -83,6 +84,36 @@ def parse_args():
     return args
 
 
+def _parse_input_file(input_file):
+    """
+    Parse track paths from a text file (one path per line).
+    Skips empty lines and lines starting with '#' (comments).
+    
+    Parameters:
+        input_file (str): Path to the text file containing track paths
+        
+    Returns:
+        list: List of track paths from the file
+    """
+    if not os.path.exists(input_file):
+        raise FileNotFoundError(f"[ERROR] Input file {input_file} does not exist.")
+    
+    paths = []
+    with open(input_file, 'r') as f:
+        for line_num, line in enumerate(f, 1):
+            line = line.strip()
+            # Skip empty lines and comments
+            if line and not line.startswith('#'):
+                # Expand user home directory if present
+                path = os.path.expanduser(line)
+                paths.append(path)
+    
+    if not paths:
+        raise ValueError(f"[ERROR] No valid paths found in {input_file}")
+    
+    return paths
+
+
 def _load_genome_mappings():
     """Loads genome mappings from genome.yaml"""
     try:
@@ -99,17 +130,33 @@ def main():
     os.environ["DISPLAY"] = ""
     args = parse_args()
 
+    # Parse input paths - handle both .txt file and direct paths
+    input_paths = []
+    if len(args.input) == 1 and args.input[0].endswith('.txt'):
+        # Input is a text file containing paths
+        try:
+            input_paths = _parse_input_file(args.input[0])
+            print(f"[INFO] Loaded {len(input_paths)} track(s) from {args.input[0]}")
+        except (FileNotFoundError, ValueError) as e:
+            print(str(e), file=sys.stderr)
+            sys.exit(1)
+    else:
+        # Input is direct paths
+        input_paths = args.input
+
     # Ensure paths exist
     os.makedirs(args.output, exist_ok=True)
-    for path in args.input:
-        assert os.path.exists(path), f'[ERROR] {path} does not exist.'
+    for path in input_paths:
+        if not os.path.exists(path):
+            print(f'[ERROR] {path} does not exist.', file=sys.stderr)
+            sys.exit(1)
 
     genome_map = _load_genome_mappings()
     genome = genome_map.get(args.genome, args.genome) # convert e.g. GRCh38 -> hg38
 
     try:
         kwargs = {
-            "paths": args.input,
+            "paths": input_paths,
             "regions": args.regions,
             "output_dir": args.output,
             "genome": genome,

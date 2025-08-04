@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "igver": {
+      "command": "uv",
+      "args": ["run", "igver-mcp"],
+      "env": {
+        "IGVER_RUNTIME": "docker",
+        "IGVER_DEFAULT_GENOME": "hg38",
+        "IGVER_DEBUG": "false"
+      },
+      "cwd": "/home/sahuno/apps/igver/igver-mcp"
+    }
+  }
+}
