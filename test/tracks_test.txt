@@ -1,0 +1,3 @@
+# Test tracks file
+test/test_tumor.bam
+test/test_normal.bam

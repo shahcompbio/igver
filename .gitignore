@@ -183,3 +183,7 @@ results/
 logs/
 .snakemake/
 develop.sh
+
+# MCP server logs
+gutils-mcp.log
+gutils-mcp-error.log
