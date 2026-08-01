@@ -183,3 +183,5 @@ data/
 logs/
 .snakemake/
 develop.sh
+.vscode
+output/
